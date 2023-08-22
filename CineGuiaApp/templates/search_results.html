@@ -1,0 +1,104 @@
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados da Pesquisa - CineGuia</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% bootstrap_javascript jquery='full' %}
+    
+    <link rel="icon" type="imagex/png" href="../static/img/CG.png">
+    <link rel="stylesheet" href="../static/css/search_results.css">
+</head>
+<body>
+    <header class="bg-dark text-white search-results-header">
+        <div class="container">
+            <h1 class="py-4">Cine<span class="text-danger">Guia</span></h1>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="{% url 'index' %}">Início</a>
+                        </li>
+                       
+                    </ul>
+                </div>
+            </nav>
+            <form class="form-inline" action="{% url 'search_results' %}" method="GET">
+                <input class="form-control mr-sm-2 wider-search" type="search" name="q" placeholder="Buscar filmes...">
+                
+                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h2 class="search-results-title">Resultados da Pesquisa</h2>
+        <div class="filme-container">
+            {% for filme in resultados %}
+            <div class="card">
+                <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{ filme.img }}" class="card-img-top" alt="{{ filme.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ filme.title }}</h5>
+                    <p class="card-text">{{ filme.avaliacao }}</p>
+                    <button class="btn btn-primary ver-detalhes" data-toggle="modal" data-target="#modal{{ filme.id }}">Ver Detalhes</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <!-- Modal -->
+    {% for filme in resultados %}
+    <div class="modal fade" id="modal{{ filme.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ filme.id }}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel{{ filme.id }}">{{ filme.title }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{ filme.img }}" class="modal-img img-fluid" alt="{{ filme.title }}">
+                        </div>
+                        <div class="col-md-6">
+                            <div class="description-scroll">
+                                <p><strong>Descrição:</strong></p>
+                                <div class="modal-description">{{ filme.descricao }}</div>
+                            </div>
+                            <p><strong>Avaliação:</strong> {{ filme.avaliacao }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="{% url 'filmes' %}?filme_id={{ filme.id_filme }}" class="btn btn-secondary">Filmes Semelhantes</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

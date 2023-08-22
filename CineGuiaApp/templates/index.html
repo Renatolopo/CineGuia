@@ -1,0 +1,212 @@
+{% load bootstrap4 %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineGuia - Sua Fonte de Recomendações Cinematográficas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" type="imagex/png" href="../static/img/CG.png">
+    <link rel="stylesheet" href="../static/css/index.css">
+</head>
+<body>
+    <header class="bg-dark text-white">
+        
+        <div class="container d-flex justify-content-between align-items-center py-4">
+            <h1 class="m-0">Cine<span class="text-danger">Guia</span></h1>
+            <div class="search-bar">
+                <form class="form-inline" action="{% url 'search_results' %}" method="GET">
+                    <input class="form-control mr-sm-2 wider-search" type="search" name="q" placeholder="Buscar filmes...">
+                    <button class="btn btn-outline-light my-2 my-sm-0" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            
+            
+            
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="#">Início</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#filmes-em-destaque">Filmes em Destaque</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#categorias">Categorias</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" data-toggle="modal" data-target="#sobre-nos-modal">Sobre Nós</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Contato</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Modal Sobre Nós -->
+    <div class="modal fade" id="sobre-nos-modal" tabindex="-1" role="dialog" aria-labelledby="sobre-nos-modal-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sobre-nos-modal-label">Sobre Nós</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>O CineGuia é formado por uma equipe apaixonada por cinema e entretenimento. Nossa missão é proporcionar aos amantes do cinema uma fonte confiável de recomendações cinematográficas. Através de nossa plataforma, você poderá explorar uma ampla seleção de filmes, desde clássicos até as mais recentes produções, para encontrar as melhores opções que se encaixam no seu gosto e preferências.</p>
+                    <p>Nossa equipe trabalha constantemente para manter nossa lista de filmes em destaque atualizada e oferecer informações detalhadas sobre cada filme, incluindo avaliações, sinopses e muito mais. Queremos ser o seu guia confiável na jornada para descobrir os melhores filmes para assistir.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="container">
+            <h2>Descubra os Melhores Filmes para Assistir!</h2>
+            <p class="lead">Bem-vindo ao CineGuia, sua fonte confiável para recomendações cinematográficas. Explore uma vasta seleção de filmes e encontre as melhores opções para o seu gosto.</p>
+            <a href="#" class="btn btn-primary cta-button">Comece a Explorar</a>
+        </div>
+    </section>
+
+    <section id="filmes-em-destaque" class="bg-light py-5">
+        <div class="container">
+
+            <h2 class="text-center mb-4">Filmes em Destaque</h2>
+            <button id="atualizar-button" class="btn btn-primary">Atualizar</button>
+
+                <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var atualizarButton = document.getElementById("atualizar-button");
+                    
+                    atualizarButton.addEventListener("click", function() {
+                        // Fazendo uma solicitação AJAX para a rota que você criou
+                        fetch("/atualizar-filmes-em-destaque/")
+                            .then(response => response.json())
+                            .then(data => {
+                                alert(data.message); // Exibindo uma mensagem de sucesso
+                            })
+                            .catch(error => {
+                                console.error("Erro ao atualizar filmes em destaque:", error);
+                            });
+                    });
+                });
+                </script>
+            <div class="row">
+                <!-- Aqui você pode adicionar os cartazes ou informações dos filmes em destaque usando a classe 'col-md-4' para cada filme -->
+                <div class="filme-container">
+                    {% for filme in filmes %}
+                    <div class="card">
+                        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{ filme.img }}" class="card-img-top" alt="{{ filme.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ filme.title }}</h5>
+                            <p class="card-text">{{ filme.avaliacao }}</p>
+                            <button class="btn btn-primary ver-detalhes" data-toggle="modal" data-target="#modal{{ filme.id }}">Ver Detalhes</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Modal -->
+                {% for filme in filmes %}
+                <div class="modal fade" id="modal{{ filme.id }}" tabindex="-1" role="dialog" aria-labelledby="modalLabel{{ filme.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalLabel{{ filme.id }}">{{ filme.title }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2{{ filme.img }}" class="modal-img img-fluid" alt="{{ filme.title }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="description-scroll">
+                                            <p><strong>Descrição:</strong></p>
+                                            <div class="modal-description">{{ filme.descricao }}</div>
+                                        </div>
+                                        <p><strong>Avaliação:</strong> {{ filme.avaliacao }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="{% url 'filmes' %}?filme_id={{ filme.id_filme }}" class="btn btn-secondary">Filmes Semelhantes</a>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+
+
+
+            
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="categorias" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Categorias Populares</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Ação</h5>
+                            <p class="card-text">Explore uma seleção emocionante de filmes de ação.</p>
+                            <a href="#" class="btn btn-outline-primary">Ver Mais</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Comédia</h5>
+                            <p class="card-text">Ria alto com nossa coleção de filmes de comédia.</p>
+                            <a href="#" class="btn btn-outline-primary">Ver Mais</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Drama</h5>
+                            <p class="card-text">Explore uma seleção emocionante de filmes dramáticos.</p>
+                            <a href="#" class="btn btn-outline-primary">Ver Mais</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-dark text-white py-3">
+        <div class="container text-center">
+            <p>&copy; 2023 CineGuia - Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% bootstrap_javascript jquery='full' %}
+</body>
+</html>
